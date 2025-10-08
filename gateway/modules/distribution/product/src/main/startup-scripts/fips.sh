@@ -20,6 +20,19 @@ BCPKIX_FIPS_VERSION=1.0.7;
 EXPECTED_BC_FIPS_CHECKSUM="704e65f7e4fe679e5ab2aa8a840f27f8ced4c522"
 EXPECTED_BCPKIX_FIPS_CHECKSUM="fe07959721cfa2156be9722ba20fdfee2b5441b0"
 
+# resolve links - $0 may be a softlink
+PRG="$0"
+
+while [ -h "$PRG" ]; do
+  ls=`ls -ld "$PRG"`
+  link=`expr "$ls" : '.*-> \(.*\)$'`
+  if expr "$link" : '.*/.*' > /dev/null; then
+    PRG="$link"
+  else
+    PRG=`dirname "$PRG"`/"$link"
+  fi
+done
+
 # Get standard environment variables
 PRGDIR=`dirname "$PRG"`
 
@@ -42,25 +55,25 @@ if [ "$ARGUMENT" = "DISABLE" ] || [ "$ARGUMENT" = "disable" ]; then
   if [ -f $CARBON_HOME/repository/components/lib/bc-fips*.jar ]; then
     sever_restart_required=true
     echo "Removing existing bc-fips jar from lib folder."
-    rm rm $CARBON_HOME/repository/components/lib/bc-fips*.jar 2> /dev/null
+    rm $CARBON_HOME/repository/components/lib/bc-fips*.jar 2> /dev/null
     echo "Successfully removed bc-fips_$BC_FIPS_VERSION.jar from component/lib."
   fi
   if [ -f $CARBON_HOME/repository/components/lib/bcpkix-fips*.jar ]; then
     sever_restart_required=true
     echo "Removing existing bcpkix-fips jar from lib folder."
-    rm rm $CARBON_HOME/repository/components/lib/bcpkix-fips*.jar 2> /dev/null
+    rm $CARBON_HOME/repository/components/lib/bcpkix-fips*.jar 2> /dev/null
     echo "Successfully removed bcpkix-fips_$BCPKIX_FIPS_VERSION.jar  from component/lib."
   fi
   if [ -f $CARBON_HOME/repository/components/dropins/bc_fips*.jar ]; then
     sever_restart_required=true
     echo "Removing existing bc-fips jar from dropins folder."
-    rm rm $CARBON_HOME/repository/components/dropins/bc_fips*.jar 2> /dev/null
+    rm $CARBON_HOME/repository/components/dropins/bc_fips*.jar 2> /dev/null
     echo "Successfully removed bc-fips_$BC_FIPS_VERSION.jar from component/dropins."
   fi
   if [ -f $CARBON_HOME/repository/components/dropins/bcpkix_fips*.jar ]; then
       sever_restart_required=true
     echo "Removing existing bcpkix_fips jar from dropins folder."
-    rm rm $CARBON_HOME/repository/components/dropins/bcpkix_fips*.jar 2> /dev/null
+    rm $CARBON_HOME/repository/components/dropins/bcpkix_fips*.jar 2> /dev/null
     echo "Successfully removed bcpkix_fips_$BCPKIX_FIPS_VERSION.jar from component/dropins."
   fi
   if [ ! -e $CARBON_HOME/repository/components/plugins/bcprov-jdk*.jar ]; then
@@ -361,12 +374,12 @@ else
 		if [ ! $location = "$CARBON_HOME/repository/components/lib/bc-fips-$BC_FIPS_VERSION.jar" ]; then
       sever_restart_required=true
         echo "There is an update for bc-fips. Therefore Remove existing bc-fips jar from lib folder."
-        rm rm $CARBON_HOME/repository/components/lib/bc-fips*.jar 2> /dev/null
+        rm $CARBON_HOME/repository/components/lib/bc-fips*.jar 2> /dev/null
       echo "Successfully removed bc-fips_$BC_FIPS_VERSION.jar from component/lib."
       if [ -f $CARBON_HOME/repository/components/dropins/bc_fips*.jar ]; then
         sever_restart_required=true
         echo "Removing existing bc-fips jar from dropins folder."
-        rm rm $CARBON_HOME/repository/components/dropins/bc_fips*.jar 2> /dev/null
+        rm $CARBON_HOME/repository/components/dropins/bc_fips*.jar 2> /dev/null
         echo "Successfully removed bc-fips_$BC_FIPS_VERSION.jar from component/dropins."
       fi
 		fi
@@ -411,11 +424,11 @@ else
 		if [ ! $location = "$CARBON_HOME/repository/components/lib/bcpkix-fips-$BCPKIX_FIPS_VERSION.jar" ]; then
       sever_restart_required=true
         echo "There is an update for bcpkix-fips. Therefore Remove existing bcpkix-fips jar from lib folder."
-        rm rm $CARBON_HOME/repository/components/lib/bcpkix-fips*.jar 2> /dev/null
+        rm $CARBON_HOME/repository/components/lib/bcpkix-fips*.jar 2> /dev/null
         echo "Successfully removed bcpkix-fips_$BCPKIX_FIPS_VERSION.jar from component/lib."
       if [ -f $CARBON_HOME/repository/components/dropins/bcpkix-fips*.jar ]; then
         echo "Removing existing bcpkix-fips jar from dropins folder."
-        rm rm $CARBON_HOME/repository/components/dropins/bcpkix_fips*.jar 2> /dev/null
+        rm $CARBON_HOME/repository/components/dropins/bcpkix_fips*.jar 2> /dev/null
         echo "Successfully removed bcpkix-fips_$BCPKIX_FIPS_VERSION.jar from component/dropins."
       fi
 		fi
@@ -446,7 +459,7 @@ else
 		else
 			echo "Downloading required bcpkix-fips jar : bcpkix-fips-$BCPKIX_FIPS_VERSION"
       curl $arg2/org/bouncycastle/bcpkix-fips/$BCPKIX_FIPS_VERSION/bcpkix-fips-$BCPKIX_FIPS_VERSION.jar -o $CARBON_HOME/repository/components/lib/bcpkix-fips-$BCPKIX_FIPS_VERSION.jar
-			ACTUAL_CHECKSUM=$(sha1sucam $CARBON_HOME/repository/components/lib/bc-fips*.jar | cut -d' ' -f1)
+			ACTUAL_CHECKSUM=$(shasum $CARBON_HOME/repository/components/lib/bc-fips*.jar | cut -d' ' -f1)
       if [ "$EXPECTED_BCPKIX_FIPS_CHECKSUM" = "$ACTUAL_CHECKSUM" ]; then
           echo "Checksum verified: The downloaded bcpkix-fips-$BCPKIX_FIPS_VERSION.jar is valid."
       else
